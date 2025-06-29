@@ -9,8 +9,9 @@ import serviceLogRouter from "./routes/serviceLog.routes.js";
 import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
 import job from "./cron.js";
 
-const app = express();
+job.start()
 
+const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
