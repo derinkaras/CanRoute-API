@@ -8,6 +8,7 @@ import canRouter from "./routes/can.routes.js";
 import serviceLogRouter from "./routes/serviceLog.routes.js";
 import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
 import job from "./cron.js";
+import payrollRouter from "./routes/payroll.routes.js";
 
 job.start()
 
@@ -24,6 +25,8 @@ app.get('/', (req, res) => {
 app.use("/api/v1/users", authRouter)
 app.use("/api/v1/cans", canRouter);
 app.use("/api/v1/serviceLogs", serviceLogRouter);
+app.use("/api/v1/payroll", payrollRouter);
+
 app.use(errorMiddleware) // Always want to use your error middleware after your routes
 
 app.listen(PORT, async () => {

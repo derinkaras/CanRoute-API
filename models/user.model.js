@@ -29,6 +29,12 @@ const userSchema = new mongoose.Schema({
         enum: ["crew", "admin"],
         required: [true, "Role is required"],
     },
+    payrollNumber: {
+        type: Number,
+        required: [true, "Payroll Number is required"],
+        unique: true,
+    }
+
 }, {timestamps: true});
 
 

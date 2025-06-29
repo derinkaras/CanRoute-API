@@ -3,6 +3,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {JWT_EXPIRES_IN, JWT_SECRET} from "../config/env.js";
+import Payroll from "../models/payroll.model.js";
 
 
 export const signUp = async (req, res, next) => {
@@ -10,8 +11,7 @@ export const signUp = async (req, res, next) => {
     session.startTransaction()
 
     try {
-        const { name, email, password } = req.body;
-        console.log("DEBUGGING, REQ BODY: ", req.body)
+        const { name, email, password, payrollNumber} = req.body;
         const isExistingUser = await User.findOne({email});
 
         // If the user exists, throw an error
@@ -26,13 +26,26 @@ export const signUp = async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const newUsers = await User.create([ {name, email, password: hashedPassword, role: "crew"}], {session})
+        // The payroll number being unique makes it so if someone has already created an account with the payroll number trying to do it again
+        // would create an error which is caught and passed to our error handling middleware
+        const isValidPayrollNumber = await Payroll.findOne({
+            payrollNumber
+        })
+
+        if (!isValidPayrollNumber) {
+            return res.status(400).send({
+                success: false,
+                error: "Invalid Payroll Number"
+            })
+        }
+
+        const newUsers = await User.create([ {name, email, password: hashedPassword, role: "crew", payrollNumber}], {session})
         const newUser = newUsers[0]
 
         const token = jwt.sign({userId: newUser._id}, JWT_SECRET, {expiresIn: JWT_EXPIRES_IN})
         await session.commitTransaction();
         await session.endSession()
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
             message: "User successfully created!",
             data: {
