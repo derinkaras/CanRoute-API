@@ -7,6 +7,7 @@ import authRouter from "./routes/auth.routes.js";
 import canRouter from "./routes/can.routes.js";
 import serviceLogRouter from "./routes/serviceLog.routes.js";
 import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
+import job from "./cron.js";
 
 const app = express();
 
