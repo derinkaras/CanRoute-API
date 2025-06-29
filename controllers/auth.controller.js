@@ -11,6 +11,7 @@ export const signUp = async (req, res, next) => {
 
     try {
         const { name, email, password } = req.body;
+        console.log("DEBUGGING, REQ BODY: ", req.body)
         const isExistingUser = await User.findOne({email});
 
         // If the user exists, throw an error
