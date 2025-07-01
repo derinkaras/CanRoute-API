@@ -54,8 +54,8 @@ export const getCrewMemberCans = async (req, res, next) => {
         })
         if (cans.length === 0) {
             return res.status(404).json({
-                success: false,
-                message: `Can for crew with id: ${id} could not be found`
+                success: true,
+                message: `Crew member with id: ${id} has no assigned cans`,
             })
         }
         return res.status(200).json({
