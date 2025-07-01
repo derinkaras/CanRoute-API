@@ -67,14 +67,14 @@ export const getCansServicedByUser = async (req, res, next) => {
     }
 }
 
-export const getCanServicedByUser = async (req, res, next) => {
+export const getSpecificUserCanOnDay = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        const { canId, weekOf } = req.body;
+        const { id, canId, weekOf} = req.params;
+        const date = new Date(weekOf);
         const userServiceLogs = await ServiceLog.find({
             userId: id,
             canId,
-            weekOf
+            weekOf: date
         })
         return res.status(200).json({
             success: true,
