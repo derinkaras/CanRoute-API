@@ -2,7 +2,7 @@ import {Router} from "express";
 import {
     addServiceLog,
     deleteServiceLog,
-    editServiceLog, getCanServicedByUser,
+    editServiceLog,
     getCansServicedByUser, getSpecificUserCanOnDay
 } from "../controllers/serviceLog.controller.js";
 import {authorize} from "../middlewares/auth.middleware.js";
