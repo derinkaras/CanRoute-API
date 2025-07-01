@@ -65,5 +65,22 @@ export const getCansServicedByUser = async (req, res, next) => {
     } catch (e) {
         next(e);
     }
+}
 
+export const getCanServicedByUser = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { canId, weekOf } = req.body;
+        const userServiceLogs = await ServiceLog.find({
+            userId: id,
+            canId,
+            weekOf
+        })
+        return res.status(200).json({
+            success: true,
+            data: userServiceLogs
+        })
+    } catch (e) {
+        next(e);
+    }
 }
