@@ -39,7 +39,7 @@ export const getCan = async (req, res, next) => {
     }
 }
 
-export const getCrewCan = async (req, res, next) => {
+export const getCrewMemberCans = async (req, res, next) => {
     // This can be changed in the future to make sure the authorized user is the one thats requesting the data on their cans
     try {
         const { id } = req.params;
