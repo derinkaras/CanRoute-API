@@ -56,6 +56,7 @@ export const getCrewMemberCans = async (req, res, next) => {
             return res.status(404).json({
                 success: true,
                 message: `Crew member with id: ${id} has no assigned cans`,
+                data: []
             })
         }
         return res.status(200).json({
