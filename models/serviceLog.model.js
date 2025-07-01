@@ -17,8 +17,8 @@ const serviceLogSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["pending", "serviced", "not_needed", "missed"],
-        default: 'pending'
+        enum: ["serviced", "not_needed", "unserviced"],
+        default: 'unserviced'
     },
     servicedAt: {
         type: Date,
