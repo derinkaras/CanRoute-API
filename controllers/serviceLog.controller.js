@@ -72,7 +72,9 @@ export const getCansServicedByUser = async (req, res, next) => {
     }
 }
 
-export const getSpecificUserCanOnDay = async (req, res, next) => {
+export const getUserServiceLogForCanAndWeek = async (req, res, next) => {
+    // Gets the specific service of a can for that week
+    // Need to change later to account for same can being service M and F for same week
     try {
         const { userId, canId, weekOf } = req.params;
         const date = new Date(weekOf);
@@ -87,5 +89,23 @@ export const getSpecificUserCanOnDay = async (req, res, next) => {
         })
     } catch (e) {
         next(e);
+    }
+}
+
+export const getUserServiceLogsForAllCansOfWeek = async (req, res, next) => {
+    try {
+        const {userId, weekOf} = req.params;
+        const date = new Date(weekOf);
+        const userServiceLogs = await ServiceLog.find({
+            userId,
+            weekOf: date
+        })
+        return res.status(200).json({
+            success: true,
+            data: userServiceLogs
+        })
+
+    } catch (error) {
+        next(error)
     }
 }
