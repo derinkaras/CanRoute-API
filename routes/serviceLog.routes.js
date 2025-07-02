@@ -12,8 +12,8 @@ const serviceLogRouter = Router()
 
 serviceLogRouter.post("/", authorize, addServiceLog)
 serviceLogRouter.get("/specific/:userId/:canId/:weekOf", authorize, getSpecificUserCanOnDay)
+serviceLogRouter.patch("/:userId/:canId/:weekOf", authorize, editServiceLog)
 serviceLogRouter.delete("/:id", authorize, deleteServiceLog)
-serviceLogRouter.patch("/:id", authorize, editServiceLog)
 serviceLogRouter.get("/:id", authorize, getCansServicedByUser)
 
 

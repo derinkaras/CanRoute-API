@@ -37,9 +37,14 @@ export const deleteServiceLog = async (req, res, next) => {
 
 export const editServiceLog = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const { userId, canId, weekOf } = req.params;
+        const date = new Date(weekOf);
         const updates = req.body;
-        const updatedServiceLog = await ServiceLog.findByIdAndUpdate(id, updates, {
+        const updatedServiceLog = await ServiceLog.findOneAndUpdate({
+            userId,
+            canId,
+            weekOf: date,
+        }, updates, {
             new: true,
             runValidators: true
         })
