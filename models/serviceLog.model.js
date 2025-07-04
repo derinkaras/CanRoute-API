@@ -24,6 +24,10 @@ const serviceLogSchema = new mongoose.Schema({
         type: Date,
         default: null
     },
+    servicedDate: {
+        type: String,
+        required: [true, "The date (YYYY-MM-DD) of the service is required"]
+    },
     illegalDumping: {
         type: Boolean,
         default: false
@@ -33,7 +37,7 @@ const serviceLogSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-serviceLogSchema.index({ canId: 1, weekOf: 1}, {unique: true});
+serviceLogSchema.index({ canId: 1, servicedDate: 1}, {unique: true});
 
 const ServiceLog = mongoose.model("ServiceLog", serviceLogSchema);
 
