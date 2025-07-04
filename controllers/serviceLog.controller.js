@@ -3,8 +3,8 @@ import ServiceLog from "../models/serviceLog.model.js";
 
 export const addServiceLog = async (req, res, next) => {
     try {
-        const { canId, userId, weekOf, status, servicedAt, illegalDumping, notes} = req.body;
-        const serviceLogs = await ServiceLog.create([{canId, userId, weekOf, status, servicedAt, illegalDumping, notes}])
+        const { canId, userId, weekOf, status, servicedAt, servicedDate, illegalDumping, notes} = req.body;
+        const serviceLogs = await ServiceLog.create([{canId, userId, weekOf, status, servicedAt, servicedDate, illegalDumping, notes}])
         const serviceLog = serviceLogs[0]
         return res.status(200).json({
             success: true,
