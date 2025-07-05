@@ -19,7 +19,7 @@ const canSchema = new mongoose.Schema({
     assignedDay: {
         type: String,
         required: true,
-        enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
+        enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
     }
 }, { timestamps: true });
 
