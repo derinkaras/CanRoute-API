@@ -8,7 +8,9 @@ const canSchema = new mongoose.Schema({
     },
     location: {
         latitude: { type: Number, required: true },
-        longitude: { type: Number, required: true }
+        longitude: { type: Number, required: true },
+        latitudeDelta: { type: Number, required: false, default: 0.1 },
+        longitudeDelta: { type: Number, required: false, default: 0.1 },
     },
     label: {
         type: String,
