@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {signIn, signOut, signUp, userExists} from "../controllers/auth.controller.js";
+import {signIn, signUp, userExists} from "../controllers/auth.controller.js";
 import {authorize} from "../middlewares/auth.middleware.js";
 
 
