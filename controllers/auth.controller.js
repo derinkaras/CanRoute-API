@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {JWT_EXPIRES_IN, JWT_SECRET} from "../config/env.js";
 import Payroll from "../models/payroll.model.js";
+import * as trace_events from "node:trace_events";
 
 
 export const signUp = async (req, res, next) => {
@@ -95,5 +96,16 @@ export const signIn = async (req, res, next) => {
     }
 }
 
+export const userExists = async function (req, res, next) {
+    try {
+        const { email } = req.params;
+        const exists = await User.findOne({ email });
+        return res.status(200).json({
+            success: true,
+            data: !!exists // convert to true/false directly
+        });
+    } catch (error) {
+        next(error);
+    }
+}
 
-export const signOut = async function (req, res) {}
