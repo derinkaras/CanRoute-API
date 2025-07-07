@@ -7,7 +7,7 @@ const authRouter = Router()
 
 authRouter.post('/sign-up', signUp);
 authRouter.post('/sign-in', signIn);
-authRouter.get('/:email', userExists) // Checks if the user by that meail exists
+authRouter.get('/user-exists/:email', authorize,userExists) // Checks if the user by that meail exists
 
 export default authRouter;
 
