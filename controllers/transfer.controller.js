@@ -5,16 +5,16 @@ import mongoose from "mongoose";
 
 export const addTransfer = async (req, res, next) => {
     try {
-        const {from, to, cans} = req.body
-        const fromUserExists = await User.findById(from)
-        const toUserExists = await User.findById(to)
+        const {fromName, toName, fromId, toId, cans} = req.body
+        const fromUserExists = await User.findById(fromId)
+        const toUserExists = await User.findById(toId)
         if (!fromUserExists || !toUserExists) {
             return res.status(400).json({
                 success: false,
                 message: "From userId or toUser Id does not exist",
             })
         }
-        const transferObj = await Transfer.create([{from, to, cans}])
+        const transferObj = await Transfer.create([{fromName, toName, fromId, toId, cans}])
         return res.status(201).json({
             success: true,
             data: transferObj
