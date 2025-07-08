@@ -14,7 +14,7 @@ const transferSchema = new mongoose.Schema({
     },
     cans: {
         type: Map,
-        of: Mongoose.Schema.Types.Mixed,
+        of: mongoose.Schema.Types.Mixed,
         required: [true, "Must provide cans to be transferred"]
     }
 })
