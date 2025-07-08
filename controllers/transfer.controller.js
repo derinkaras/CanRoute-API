@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Transfer from "../models/transfer.model.js";
+import mongoose from "mongoose";
 
 
 export const addTransfer = async (req, res, next) => {
@@ -22,5 +23,26 @@ export const addTransfer = async (req, res, next) => {
         console.error("The error happened in add transfer");
         next(error)
     }
+}
 
+export const getTransfer = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "The id of the user is not valid",
+            })
+        }
+        const transferRequests = await Transfer.find({to: id})
+
+        return res.status(200).json({
+            success: true,
+            data: transferRequests
+        })
+
+    } catch (error) {
+        console.error("Error in the get transfer: ", error);
+        next(error)
+    }
 }
