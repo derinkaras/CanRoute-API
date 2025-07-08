@@ -9,6 +9,7 @@ import serviceLogRouter from "./routes/serviceLog.routes.js";
 import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
 import job from "./cron.js";
 import payrollRouter from "./routes/payroll.routes.js";
+import transferRouter from "./routes/transfer.routes.js";
 
 job.start()
 
@@ -26,6 +27,8 @@ app.use("/api/v1/users", authRouter)
 app.use("/api/v1/cans", canRouter);
 app.use("/api/v1/serviceLogs", serviceLogRouter);
 app.use("/api/v1/payroll", payrollRouter);
+app.use("/api/v1/transfer", transferRouter);
+
 
 app.use(errorMiddleware) // Always want to use your error middleware after your routes
 
