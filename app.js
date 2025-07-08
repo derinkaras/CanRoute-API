@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(arcjetMiddleware)
+//app.use(arcjetMiddleware)
 
 app.get('/', (req, res) => {
     res.send('Welcome to the CanRoute API!')
