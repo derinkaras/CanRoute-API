@@ -34,7 +34,7 @@ export const getTransfer = async (req, res, next) => {
                 message: "The id of the user is not valid",
             })
         }
-        const transferRequests = await Transfer.find({to: id})
+        const transferRequests = await Transfer.find({toId: id})
 
         return res.status(200).json({
             success: true,
