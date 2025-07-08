@@ -99,10 +99,10 @@ export const signIn = async (req, res, next) => {
 export const userExists = async function (req, res, next) {
     try {
         const { email } = req.params;
-        const exists = await User.findOne({ email });
+        const user = await User.findOne({ email });
         return res.status(200).json({
-            success: true,
-            data: !!exists // convert to true/false directly
+            success: !!user,
+            data: user
         });
     } catch (error) {
         next(error);

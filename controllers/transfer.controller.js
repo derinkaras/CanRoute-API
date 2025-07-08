@@ -19,7 +19,7 @@ export const addTransfer = async (req, res, next) => {
             data: transferObj
         })
     } catch (error) {
-        console.error("The error happend in add transfer");
+        console.error("The error happened in add transfer");
         next(error)
     }
 
