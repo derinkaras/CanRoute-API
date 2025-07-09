@@ -46,3 +46,25 @@ export const getTransfer = async (req, res, next) => {
         next(error)
     }
 }
+
+export const deleteTransfer = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "The id of the transfer is not valid",
+            })
+        }
+        await Transfer.findByIdAndDelete(id)
+        return res.status(200).json({
+            success: true,
+            message: "Successfully deleted"
+        })
+
+    } catch (error) {
+        console.error("The error happened in deleteTransfer");
+        next(error)
+    }
+
+}
