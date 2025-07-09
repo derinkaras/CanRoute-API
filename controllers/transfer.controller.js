@@ -88,22 +88,25 @@ export const acceptTransfer = async (req, res, next) => {
                 message: "The transfer does not exist"
             })
         }
-        for (const canId of Object.keys(transfer.cans)) {
-            console.log("DEBUG2 This is the can id before finding it and updating it: ", canId)
+        const plainCans = transfer.cans.toObject?.() || transfer.cans;
+        for (const [canId] of Object.entries(plainCans)) {
             if (!mongoose.Types.ObjectId.isValid(canId)) {
-                console.log("Skipping invalid key in cans:", canId);
+                console.warn("Skipping invalid key in cans:", canId);
                 continue;
             }
-            console.log("gets here ?")
+
+            console.log("gets here ?");
+
             const can = await Can.findByIdAndUpdate(canId, {
                 crewId: transfer.toId
             }, {
                 new: true,
                 runValidators: true,
-            })
-            console.log("DEBUG3 This is the can after the update: ", JSON.stringify(can, null, 2));
+            });
 
+            console.log("DEBUG3 This is the can after the update: ", JSON.stringify(can, null, 2));
         }
+
         await Transfer.findByIdAndDelete(id)
         return res.status(200).json({
             success: true,
