@@ -75,6 +75,7 @@ export const acceptTransfer = async (req, res, next) => {
         const { id } = req.params;
         const transfer = await Transfer.findById(id)
 
+        console.log("DEBUG1 This is the transfer sent: ", JSON.stringify(transfer, null, 2));
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({
                 success: false,
@@ -92,12 +93,14 @@ export const acceptTransfer = async (req, res, next) => {
                 console.warn("Skipping invalid key in cans:", canId);
                 continue;
             }
-            await Can.findByIdAndUpdate(canId, {
+            const can = await Can.findByIdAndUpdate(canId, {
                 crewId: transfer.toId
             }, {
                 new: true,
                 runValidators: true,
             })
+            console.log("DEBUG2 This is the can after the update: ", JSON.stringify(can, null, 2));
+
         }
         await Transfer.findByIdAndDelete(id)
         return res.status(200).json({
@@ -109,7 +112,7 @@ export const acceptTransfer = async (req, res, next) => {
         console.error("The error happened in acceptTransfer");
         //next(error)
         console.error(error)
-
+        next(error)
     }
 
 }
