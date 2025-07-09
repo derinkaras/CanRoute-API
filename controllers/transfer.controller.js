@@ -89,14 +89,15 @@ export const acceptTransfer = async (req, res, next) => {
             })
         }
         const plainCans = transfer.cans.toObject?.() || transfer.cans;
+        console.log("This is the plain cans: ", plainCans);
         for (const [canId] of Object.entries(plainCans)) {
+            console.log("This is the can id cans: ", canId);
+
             if (!mongoose.Types.ObjectId.isValid(canId)) {
                 console.warn("Skipping invalid key in cans:", canId);
                 continue;
             }
-
-            console.log("gets here ?");
-
+            console.log("About to find by id and update the canId:  ", canId);
             const can = await Can.findByIdAndUpdate(canId, {
                 crewId: transfer.toId
             }, {
