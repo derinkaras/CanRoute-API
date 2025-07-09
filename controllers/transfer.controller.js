@@ -88,7 +88,11 @@ export const acceptTransfer = async (req, res, next) => {
             })
         }
         for (const [canId] of Object.entries(transfer.cans)) {
-            const canInDb = await Can.findByIdAndUpdate(canId, {
+            if (!mongoose.Types.ObjectId.isValid(canId)) {
+                console.warn("Skipping invalid key in cans:", canId);
+                continue;
+            }
+            await Can.findByIdAndUpdate(canId, {
                 crewId: transfer.toId
             }, {
                 new: true,
