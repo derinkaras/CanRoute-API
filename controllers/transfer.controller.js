@@ -88,7 +88,7 @@ export const acceptTransfer = async (req, res, next) => {
                 message: "The transfer does not exist"
             })
         }
-        for (const [canId] of Object.entries(transfer.cans)) {
+        for (const canId of Object.keys(transfer.cans)) {
             if (!mongoose.Types.ObjectId.isValid(canId)) {
                 console.warn("Skipping invalid key in cans:", canId);
                 continue;
