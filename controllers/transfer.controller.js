@@ -55,7 +55,6 @@ export const deleteTransfer = async (req, res, next) => {
             return res.status(400).json({
                 success: false,
                 message: "The id of the transfer is not valid",
-                id
             })
         }
         await Transfer.findByIdAndDelete(id)
@@ -79,7 +78,7 @@ export const acceptTransfer = async (req, res, next) => {
         if (!mongoose.Types.ObjectId.isValid(transferId)) {
             return res.status(400).json({
                 success: false,
-                message: "The id of the transfer is not valid",
+                message: `The id of the transfer is not valid: ${transferId}`,
             })
         }
         if (!transfer) {
