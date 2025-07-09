@@ -93,13 +93,14 @@ export const acceptTransfer = async (req, res, next) => {
                 console.warn("Skipping invalid key in cans:", canId);
                 continue;
             }
+            console.log("DEBUG2 This is the can id before finding it and updating it: ", canId)
             const can = await Can.findByIdAndUpdate(canId, {
                 crewId: transfer.toId
             }, {
                 new: true,
                 runValidators: true,
             })
-            console.log("DEBUG2 This is the can after the update: ", JSON.stringify(can, null, 2));
+            console.log("DEBUG3 This is the can after the update: ", JSON.stringify(can, null, 2));
 
         }
         await Transfer.findByIdAndDelete(id)
