@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Transfer from "../models/transfer.model.js";
 import mongoose from "mongoose";
+import Can from "../models/can.model.js";
 
 
 export const addTransfer = async (req, res, next) => {
@@ -64,6 +65,44 @@ export const deleteTransfer = async (req, res, next) => {
 
     } catch (error) {
         console.error("The error happened in deleteTransfer");
+        next(error)
+    }
+}
+
+export const acceptTransfer = async (req, res, next) => {
+    try {
+        // Make sure the transfer exists
+        const { transferId } = req.params;
+        const transfer = await Transfer.findById(transferId)
+
+        if (!mongoose.Types.ObjectId.isValid(transferId)) {
+            return res.status(400).json({
+                success: false,
+                message: "The id of the transfer is not valid",
+            })
+        }
+        if (!transfer) {
+            return res.status(400).json({
+                success: false,
+                message: "The transfer does not exist"
+            })
+        }
+        for (const [canId] of Object.entries(transfer.cans)) {
+            const canInDb = await Can.findByIdAndUpdate(canId, {
+                crewId: transfer.toId
+            }, {
+                new: true,
+                runValidators: true,
+            })
+        }
+        await Transfer.findByIdAndDelete(transferId)
+        return res.status(200).json({
+            success: true,
+            message: "Successfully accepted the transfer"
+        })
+
+    } catch (error) {
+        console.error("The error happened in acceptTransfer");
         next(error)
     }
 
