@@ -5,7 +5,7 @@ const payrollSchema = mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: [true, "User id is required"],
+        required: false,
     },
     payrollNumber: {
         type: Number,
