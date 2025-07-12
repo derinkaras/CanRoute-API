@@ -104,6 +104,7 @@ export const acceptTransfer = async (req, res, next) => {
             // This just needs to run once
             if(!dayBeingAccepted) {
                 dayBeingAccepted = canObj.assignedDay
+                console.log("This is the day being accepted: ", dayBeingAccepted)
             }
 
             const can = await Can.findByIdAndUpdate(canId, {
