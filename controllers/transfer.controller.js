@@ -93,7 +93,7 @@ export const acceptTransfer = async (req, res, next) => {
             ? transfer.cans
             : new Map(Object.entries(transfer.cans));
 
-        for (const [canId, can] of plainCans.entries()) {
+        for (const [canId, canObj] of plainCans.entries()) {
             console.log("This is the can id:", canId);
 
             if (!mongoose.Types.ObjectId.isValid(canId)) {
@@ -103,7 +103,7 @@ export const acceptTransfer = async (req, res, next) => {
 
             // This just needs to run once
             if(!dayBeingAccepted) {
-                dayBeingAccepted = can.assignedDay
+                dayBeingAccepted = canObj.assignedDay
             }
 
             const can = await Can.findByIdAndUpdate(canId, {
