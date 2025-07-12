@@ -5,7 +5,7 @@ import {
     editCan,
     getCan,
     getCans,
-    getCrewMemberCans
+    getCrewMemberCans, updateCan
 } from "../controllers/can.controller.js";
 import {authorize} from "../middlewares/auth.middleware.js";
 
@@ -16,6 +16,7 @@ canRouter.get("/", authorize, getCans )
 canRouter.get("/crew/:id", authorize, getCrewMemberCans) //
 canRouter.get("/:id", authorize, getCan )
 canRouter.post('/', authorize, addCan)
+canRouter.post('/update', authorize, updateCan)
 canRouter.patch('/:id', authorize, editCan)
 canRouter.delete('/:id', authorize, deleteCan)
 
