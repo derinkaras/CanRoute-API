@@ -156,27 +156,30 @@ export const editCan = async (req, res, next) => {
 
 export const updateCan = async (req, res, next) => {
     try {
-        const { updates, newDay} = req.body; // Record<string, another record>
+        const { updates, newDay } = req.body;
 
         for (const [canId] of Object.entries(updates)) {
             if (!mongoose.Types.ObjectId.isValid(canId)) {
-                continue
+                continue;
             }
-            await Can.findByIdAndUpdate(canId, {
-                "assignedDay": newDay
-            })
 
-            return res.status(200).json({
-                success: true,
-                message: "Cans updated successfully"
-            })
+            await Can.findByIdAndUpdate(
+                canId,
+                { assignedDay: newDay },
+                { new: true, runValidators: true }
+            );
         }
 
-    } catch (e){
-        console.error("The error happened in the update can controller function", e)
-        next(e)
+        return res.status(200).json({
+            success: true,
+            message: "Cans updated successfully"
+        });
+    } catch (e) {
+        console.error("The error happened in the update can controller function", e);
+        next(e);
     }
 }
+
 
 
 
