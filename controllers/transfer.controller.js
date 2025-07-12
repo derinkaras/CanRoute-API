@@ -26,7 +26,7 @@ export const addTransfer = async (req, res, next) => {
     }
 }
 
-export const getTransfer = async (req, res, next) => {
+export const getTransfers = async (req, res, next) => {
     try {
         const { id } = req.params;
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -74,6 +74,7 @@ export const acceptTransfer = async (req, res, next) => {
         // Make sure the transfer exists
         const { id } = req.params;
         const transfer = await Transfer.findById(id)
+        let dayBeingAccepted;
 
         console.log("DEBUG1 This is the transfer sent: ", JSON.stringify(transfer, null, 2));
         if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -92,12 +93,17 @@ export const acceptTransfer = async (req, res, next) => {
             ? transfer.cans
             : new Map(Object.entries(transfer.cans));
 
-        for (const [canId] of plainCans.entries()) {
+        for (const [canId, can] of plainCans.entries()) {
             console.log("This is the can id:", canId);
 
             if (!mongoose.Types.ObjectId.isValid(canId)) {
                 console.warn("Skipping invalid key in cans:", canId);
                 continue;
+            }
+
+            // This just needs to run once
+            if(!dayBeingAccepted) {
+                dayBeingAccepted = can.assignedDay
             }
 
             const can = await Can.findByIdAndUpdate(canId, {
@@ -114,7 +120,8 @@ export const acceptTransfer = async (req, res, next) => {
         await Transfer.findByIdAndDelete(id)
         return res.status(200).json({
             success: true,
-            message: "Successfully accepted the transfer"
+            message: "Successfully accepted the transfer",
+            dayBeingAccepted
         })
 
     } catch (error) {
