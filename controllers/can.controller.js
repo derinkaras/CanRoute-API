@@ -158,6 +158,9 @@ export const updateCan = async (req, res, next) => {
     try {
         const { updates, newDay } = req.body;
 
+        console.log("This is the new day: ", newDay);
+        console.log("This is the updates: ", JSON.stringify(updates, null, 2));
+
         for (const [canId] of Object.entries(updates)) {
             if (!mongoose.Types.ObjectId.isValid(canId)) {
                 continue;
