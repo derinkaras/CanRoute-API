@@ -76,7 +76,6 @@ export const acceptTransfer = async (req, res, next) => {
         const transfer = await Transfer.findById(id)
         let dayBeingAccepted;
 
-        console.log("DEBUG1 This is the transfer sent: ", JSON.stringify(transfer, null, 2));
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({
                 success: false,
@@ -94,17 +93,14 @@ export const acceptTransfer = async (req, res, next) => {
             : new Map(Object.entries(transfer.cans));
 
         for (const [canId, canObj] of plainCans.entries()) {
-            console.log("This is the can id:", canId);
 
             if (!mongoose.Types.ObjectId.isValid(canId)) {
-                console.warn("Skipping invalid key in cans:", canId);
                 continue;
             }
 
             // This just needs to run once
             if(!dayBeingAccepted) {
                 dayBeingAccepted = canObj.assignedDay
-                console.log("This is the day being accepted: ", dayBeingAccepted)
             }
 
             const can = await Can.findByIdAndUpdate(canId, {
@@ -114,7 +110,6 @@ export const acceptTransfer = async (req, res, next) => {
                 runValidators: true,
             });
 
-            console.log("DEBUG3 Updated can:", can?._id?.toString() ?? "not found");
         }
 
 
