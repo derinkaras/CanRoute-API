@@ -12,7 +12,7 @@ export const signUp = async (req, res, next) => {
     session.startTransaction()
 
     try {
-        const { name, email, password, payrollNumber} = req.body;
+        const { name, email, password, payrollNumber, role} = req.body;
         const isExistingUser = await User.findOne({email});
 
         // If the user exists, throw an error
@@ -39,8 +39,13 @@ export const signUp = async (req, res, next) => {
                 error: "Invalid Payroll Number"
             })
         }
+        let newUsers;
+        if (role) {
+            newUsers = await User.create([ {name, email, password: hashedPassword, role, payrollNumber}], {session})
+        } else {
+            newUsers = await User.create([ {name, email, password: hashedPassword, payrollNumber}], {session})
 
-        const newUsers = await User.create([ {name, email, password: hashedPassword, role: "crew", payrollNumber}], {session})
+        }
         const newUser = newUsers[0]
 
         const token = jwt.sign({userId: newUser._id}, JWT_SECRET, {expiresIn: JWT_EXPIRES_IN})
