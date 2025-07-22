@@ -10,6 +10,7 @@ import arcjetMiddleware from "./middlewares/arcjet.middleware.js";
 import job from "./cron.js";
 import payrollRouter from "./routes/payroll.routes.js";
 import transferRouter from "./routes/transfer.routes.js";
+import cors from 'cors';
 
 job.start()
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 //app.use(arcjetMiddleware)
+app.use(cors());
 
 app.get('/', (req, res) => {
     res.send('Welcome to the CanRoute API!')
