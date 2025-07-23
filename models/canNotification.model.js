@@ -12,6 +12,11 @@ const canNotificationSchema = new mongoose.Schema({
         trim: true,
         maxlength: 1000
     },
+    photoUrl: {
+        type: String, // or use Buffer if you're storing the image directly in MongoDB
+        required: false,
+        default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now
