@@ -5,11 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76f6ae59-f193-4496-aa83-df02037915f9" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/controllers/canNotification.controller.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/models/canNotification.model.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/routes/canNotification.routes.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +82,7 @@
       <workItem from="1753054327856" duration="7000" />
       <workItem from="1753144326398" duration="4161000" />
       <workItem from="1753229629824" duration="6661000" />
-      <workItem from="1753308521646" duration="771000" />
+      <workItem from="1753308521646" duration="1427000" />
     </task>
     <servers />
   </component>
