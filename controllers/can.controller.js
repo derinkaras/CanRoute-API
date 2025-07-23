@@ -2,7 +2,7 @@ import Can from "../models/can.model.js";
 import mongoose from "mongoose";
 import csvParser from "csv-parser";
 import { Readable } from "stream";
-import { generateCanQrCode } from "../utils/qr.js";
+import { generateCanQrUrl } from "../utils/qr.js";
 
 export const getCans = async (req, res, next) => {
     try {
@@ -69,7 +69,6 @@ export const getCrewMemberCans = async (req, res, next) => {
         next(e);
     }
 }
-
 export const addCan = async (req, res, next) => {
     try {
         const { location } = req.body;
@@ -77,72 +76,37 @@ export const addCan = async (req, res, next) => {
         const canExists = await Can.findOne({
             "location.latitude": location.latitude,
             "location.longitude": location.longitude,
-            assignedDay: req.body.assignedDay
+            assignedDay: req.body.assignedDay,
         });
 
         if (canExists) {
             return res.status(400).json({
                 success: false,
-                message: "Can at that specific location and date already exists"
+                message: "Can at that specific location and date already exists",
             });
         }
 
-        // Create the can
         const newCan = await Can.create({
             ...req.body,
             location: {
                 latitude: Number(location.latitude.toFixed(4)),
-                longitude: Number(location.longitude.toFixed(4))
-            }
+                longitude: Number(location.longitude.toFixed(4)),
+            },
         });
 
-        // Generate QR and update
-        const qrCode = await generateCanQrCode(newCan._id);
+        // ✅ Use short QR code URL, not a base64 string
+        const qrCode = generateCanQrUrl(newCan._id);
         newCan.qrCode = qrCode;
         await newCan.save();
 
         return res.status(201).json({
             success: true,
-            data: newCan
+            data: newCan,
         });
     } catch (error) {
         next(error);
     }
 };
-
-export const addCans = async (req, res, next) => {
-    try {
-        const canExists = await Can.findOne({
-            "location.latitude": req.body.location.latitude,
-            "location.longitude": req.body.location.longitude,
-            "assignedDay": req.body.assignedDay
-        })
-        if (canExists) {
-            return res.status(400).json({
-                success: false,
-                message: "Can at that specific location and date already exists"
-            })
-        }
-        const { location } = req.body;
-        const cans = await Can.create([{
-            ...req.body,
-            location: {
-                latitude: Number(location.latitude.toFixed(4)),
-                longitude: Number(location.longitude.toFixed(4)),
-            }
-        }])
-        const can = cans[0]
-        return res.status(201).json({
-            success: true,
-            data: can
-        })
-    } catch (error) {
-        next(error)
-    }
-}
-
-
-
 
 export const deleteCan = async (req, res, next) => {
     try {
@@ -227,15 +191,18 @@ export const updateCan = async (req, res, next) => {
     }
 }
 
+
 export const uploadCansFromCSV = async (req, res, next) => {
     try {
         if (!req.file) {
-            return res.status(400).json({ success: false, message: "No file uploaded" });
+            return res.status(400).json({
+                success: false,
+                message: "No file uploaded",
+            });
         }
 
         const validCans = [];
         const invalidCans = [];
-
         const stream = Readable.from(req.file.buffer);
 
         stream
@@ -246,8 +213,8 @@ export const uploadCansFromCSV = async (req, res, next) => {
                 const errors = [];
                 if (!crewId || !mongoose.Types.ObjectId.isValid(crewId)) errors.push("Invalid or missing crewId");
                 if (!label) errors.push("Missing label");
-                if (isNaN(Number(latitude))) errors.push("Missing or invalid latitude");
-                if (isNaN(Number(longitude))) errors.push("Missing or invalid longitude");
+                if (isNaN(Number(latitude))) errors.push("Invalid latitude");
+                if (isNaN(Number(longitude))) errors.push("Invalid longitude");
                 if (
                     !["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].includes(
                         assignedDay?.toLowerCase()
@@ -272,13 +239,12 @@ export const uploadCansFromCSV = async (req, res, next) => {
             })
             .on("end", async () => {
                 try {
-                    // Insert valid cans
                     const inserted = await Can.insertMany(validCans, { ordered: false });
 
-                    // Generate and save QR codes
+                    // ✅ Attach QR code URL to each inserted can
                     for (const can of inserted) {
                         try {
-                            const qrCode = await generateCanQrCode(can._id);
+                            const qrCode = generateCanQrUrl(can._id);
                             can.qrCode = qrCode;
                             await can.save();
                         } catch (qrErr) {

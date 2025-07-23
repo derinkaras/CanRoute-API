@@ -1,6 +1,12 @@
 import QRCode from "qrcode";
 
-export const generateCanQrCode = async (canId) => {
-    const url = `https://localhost:5173/maintenance-form/${canId}`;
-    return await QRCode.toDataURL(url); // returns a base64 image string
+// ✅ For storing as value to embed in a QR (short URL)
+export const generateCanQrUrl = (canId) => {
+    return `https://localhost:5173/maintenance-form/${canId}`;
+};
+
+// ✅ For generating base64 for printing (if needed)
+export const generateCanQrImage = async (canId) => {
+    const url = generateCanQrUrl(canId);
+    return await QRCode.toDataURL(url); // base64 string for image
 };
