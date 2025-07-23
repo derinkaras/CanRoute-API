@@ -6,6 +6,11 @@ const canNotificationSchema = new mongoose.Schema({
         ref: 'Can',
         required: true
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // Assuming your user model is named 'User'
+        required: true
+    },
     message: {
         type: String,
         required: true,
@@ -13,7 +18,7 @@ const canNotificationSchema = new mongoose.Schema({
         maxlength: 1000
     },
     photoUrl: {
-        type: String, // or use Buffer if you're storing the image directly in MongoDB
+        type: String, // Or Buffer if you prefer
         required: false,
         default: null
     },

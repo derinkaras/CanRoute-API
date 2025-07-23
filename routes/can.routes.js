@@ -16,7 +16,7 @@ const canRouter = Router();
 
 canRouter.get("/", authorize, getCans);
 canRouter.get("/crew/:id", authorize, getCrewMemberCans);
-canRouter.get("/:id", authorize, getCan);
+canRouter.get("/:id", getCan);
 canRouter.post('/', authorize, addCan);
 canRouter.post('/upload', authorize, upload.single('file'), uploadCansFromCSV); // 👈 Updated CSV upload route
 canRouter.post('/update', authorize, updateCan);
