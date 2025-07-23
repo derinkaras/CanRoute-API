@@ -6,5 +6,5 @@ import notificationUpload from '../middlewares/notificationUpload.middleware.js'
 const canNotificationRouter = express.Router();
 
 canNotificationRouter.post('/', notificationUpload.single('photo'), createCanNotification);
-canNotificationRouter.get('/:crewId', getCrewIdsNotifications);
+canNotificationRouter.get('/:userId', getCrewIdsNotifications);
 export default canNotificationRouter;
