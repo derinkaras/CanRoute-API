@@ -36,3 +36,25 @@ export const createCanNotification = async (req, res, next) => {
         next(err);
     }
 };
+
+export const getCrewIdsNotifications = async (req, res, next) => {
+    try {
+        const { crewId } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(crewId)) {
+            return res.status(400).json({ success: false, message: "Invalid crewId" });
+        }
+
+        const notifications = await canNotification.find({
+            userId: crewId
+        });
+
+        return res.status(200).json({
+            success: true,
+            data: notifications
+        });
+    } catch (error) {
+        console.error("Error happened in getCrewIdsNotifications", error);
+        next(error);
+    }
+};
