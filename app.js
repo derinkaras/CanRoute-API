@@ -11,6 +11,7 @@ import job from "./cron.js";
 import payrollRouter from "./routes/payroll.routes.js";
 import transferRouter from "./routes/transfer.routes.js";
 import cors from 'cors';
+import canNotificationRouter from "./routes/canNotification.routes.js";
 
 job.start()
 
@@ -30,6 +31,7 @@ app.use("/api/v1/cans", canRouter);
 app.use("/api/v1/serviceLogs", serviceLogRouter);
 app.use("/api/v1/payroll", payrollRouter);
 app.use("/api/v1/transfer", transferRouter);
+app.use("/api/v1/can-notification", canNotificationRouter);
 
 
 app.use(errorMiddleware) // Always want to use your error middleware after your routes
