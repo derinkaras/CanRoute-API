@@ -22,6 +22,10 @@ const canSchema = new mongoose.Schema({
         type: String,
         required: true,
         enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+    },
+    qrCode: {
+        type: String,
+        required: false,
     }
 }, { timestamps: true });
 

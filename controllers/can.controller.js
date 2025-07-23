@@ -2,6 +2,7 @@ import Can from "../models/can.model.js";
 import mongoose from "mongoose";
 import csvParser from "csv-parser";
 import { Readable } from "stream";
+import { generateCanQrCode } from "../utils/qr.js";
 
 export const getCans = async (req, res, next) => {
     try {
@@ -71,35 +72,43 @@ export const getCrewMemberCans = async (req, res, next) => {
 
 export const addCan = async (req, res, next) => {
     try {
+        const { location } = req.body;
 
         const canExists = await Can.findOne({
-            "location.latitude": req.body.location.latitude,
-            "location.longitude": req.body.location.longitude,
-            "assignedDay": req.body.assignedDay
-        })
+            "location.latitude": location.latitude,
+            "location.longitude": location.longitude,
+            assignedDay: req.body.assignedDay
+        });
+
         if (canExists) {
             return res.status(400).json({
                 success: false,
                 message: "Can at that specific location and date already exists"
-            })
+            });
         }
-        const { location } = req.body;
-        const cans = await Can.create([{
+
+        // Create the can
+        const newCan = await Can.create({
             ...req.body,
             location: {
                 latitude: Number(location.latitude.toFixed(4)),
-                longitude: Number(location.longitude.toFixed(4)),
+                longitude: Number(location.longitude.toFixed(4))
             }
-        }])
-        const can = cans[0]
+        });
+
+        // Generate QR and update
+        const qrCode = await generateCanQrCode(newCan._id);
+        newCan.qrCode = qrCode;
+        await newCan.save();
+
         return res.status(201).json({
             success: true,
-            data: can
-        })
+            data: newCan
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 export const addCans = async (req, res, next) => {
     try {
@@ -263,7 +272,19 @@ export const uploadCansFromCSV = async (req, res, next) => {
             })
             .on("end", async () => {
                 try {
+                    // Insert valid cans
                     const inserted = await Can.insertMany(validCans, { ordered: false });
+
+                    // Generate and save QR codes
+                    for (const can of inserted) {
+                        try {
+                            const qrCode = await generateCanQrCode(can._id);
+                            can.qrCode = qrCode;
+                            await can.save();
+                        } catch (qrErr) {
+                            console.error(`Failed to generate QR for can ${can._id}:`, qrErr);
+                        }
+                    }
 
                     return res.status(201).json({
                         success: true,
@@ -273,14 +294,13 @@ export const uploadCansFromCSV = async (req, res, next) => {
                         invalidRows: invalidCans,
                     });
                 } catch (insertErr) {
-                    return next(insertErr); // 👈 forward insert errors (e.g., duplicates) to middleware
+                    return next(insertErr);
                 }
             })
             .on("error", (parseErr) => {
-                return next(parseErr); // 👈 forward CSV parsing errors
+                return next(parseErr);
             });
     } catch (e) {
-        return next(e); // 👈 forward unexpected outer errors
+        return next(e);
     }
 };
-
