@@ -1,6 +1,7 @@
 import Can from "../models/can.model.js";
 import mongoose from "mongoose";
-
+import csvParser from "csv-parser";
+import { Readable } from "stream";
 
 export const getCans = async (req, res, next) => {
     try {
@@ -100,6 +101,40 @@ export const addCan = async (req, res, next) => {
     }
 }
 
+export const addCans = async (req, res, next) => {
+    try {
+        const canExists = await Can.findOne({
+            "location.latitude": req.body.location.latitude,
+            "location.longitude": req.body.location.longitude,
+            "assignedDay": req.body.assignedDay
+        })
+        if (canExists) {
+            return res.status(400).json({
+                success: false,
+                message: "Can at that specific location and date already exists"
+            })
+        }
+        const { location } = req.body;
+        const cans = await Can.create([{
+            ...req.body,
+            location: {
+                latitude: Number(location.latitude.toFixed(4)),
+                longitude: Number(location.longitude.toFixed(4)),
+            }
+        }])
+        const can = cans[0]
+        return res.status(201).json({
+            success: true,
+            data: can
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+
+
+
 export const deleteCan = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -183,6 +218,69 @@ export const updateCan = async (req, res, next) => {
     }
 }
 
+export const uploadCansFromCSV = async (req, res, next) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "No file uploaded" });
+        }
 
+        const validCans = [];
+        const invalidCans = [];
 
+        const stream = Readable.from(req.file.buffer);
+
+        stream
+            .pipe(csvParser())
+            .on("data", (row) => {
+                const { crewId, label, latitude, longitude, assignedDay } = row;
+
+                const errors = [];
+                if (!crewId || !mongoose.Types.ObjectId.isValid(crewId)) errors.push("Invalid or missing crewId");
+                if (!label) errors.push("Missing label");
+                if (isNaN(Number(latitude))) errors.push("Missing or invalid latitude");
+                if (isNaN(Number(longitude))) errors.push("Missing or invalid longitude");
+                if (
+                    !["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].includes(
+                        assignedDay?.toLowerCase()
+                    )
+                ) {
+                    errors.push("Invalid assignedDay");
+                }
+
+                if (errors.length > 0) {
+                    invalidCans.push({ row, error: errors.join("; ") });
+                } else {
+                    validCans.push({
+                        crewId,
+                        label,
+                        assignedDay: assignedDay.toLowerCase(),
+                        location: {
+                            latitude: Number(Number(latitude).toFixed(4)),
+                            longitude: Number(Number(longitude).toFixed(4)),
+                        },
+                    });
+                }
+            })
+            .on("end", async () => {
+                try {
+                    const inserted = await Can.insertMany(validCans, { ordered: false });
+
+                    return res.status(201).json({
+                        success: true,
+                        message: `${inserted.length} cans added. ${invalidCans.length} rows skipped.`,
+                        insertedCount: inserted.length,
+                        validCans: inserted,
+                        invalidRows: invalidCans,
+                    });
+                } catch (insertErr) {
+                    return next(insertErr); // 👈 forward insert errors (e.g., duplicates) to middleware
+                }
+            })
+            .on("error", (parseErr) => {
+                return next(parseErr); // 👈 forward CSV parsing errors
+            });
+    } catch (e) {
+        return next(e); // 👈 forward unexpected outer errors
+    }
+};
 
