@@ -58,3 +58,29 @@ export const getCrewIdsNotifications = async (req, res, next) => {
         next(error);
     }
 };
+
+
+export const deleteNotification = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid notification ID" });
+        }
+
+        const deleted = await canNotification.findByIdAndDelete(id);
+
+        if (!deleted) {
+            return res.status(404).json({ success: false, message: "Notification not found" });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Notification deleted successfully",
+            data: deleted,
+        });
+    } catch (err) {
+        console.error("Error deleting notification:", err);
+        next(err);
+    }
+};
